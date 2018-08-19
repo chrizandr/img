@@ -7,9 +7,17 @@ from skimage import img_as_ubyte
 from skimage.io import imread
 
 
+def check_distance(c1, c2):
+    """Find distance between two colors."""
+    for c in c1:
+        if np.linalg.norm(c.astype(float)-c2.astype(float)) < 40:
+            return False
+    return True
+
+
 def hexencode(rgb):
     """Encode colors to matplotlib spec."""
-    if type(rgb) is tuple:
+    if type(rgb) is np.ndarray:
         r = rgb[0]
         g = rgb[1]
         b = rgb[2]
@@ -17,10 +25,10 @@ def hexencode(rgb):
         r = rgb
         g = rgb
         b = rgb
-        return '#%02x%02x%02x' % (r, g, b)
+    return '#%02x%02x%02x' % (r, g, b)
 
 
-def show_colors(img, colors, gray=False):
+def showColors(img, colors, gray=False):
     """Plot colormap."""
     colors = [hexencode(x) for x in colors]
     dom_color = colors[0]
@@ -34,6 +42,7 @@ def show_colors(img, colors, gray=False):
         ax.imshow(img)
     ax.set_xticks([])
     ax.set_yticks([])
+    ax.set_aspect("auto")
     ax.set_title("Image")
 
     ax = fig.add_subplot(312)
@@ -79,10 +88,13 @@ def get_histogram_gray(img, bins):
 
 def get_histogram_color(img):
     """Find histogram of color images."""
-    m, n = img.shape
+    m, n, k = img.shape
+    colors = dict()
     for i in range(m):
         for j in range(n):
-            
+            color = tuple(img[i, j])
+            colors[color] = colors.get(color, 0) + 1
+    return list(colors.values()), list(colors.keys())
 
 
 def domColors_gray(img, k):
@@ -90,7 +102,7 @@ def domColors_gray(img, k):
     # Find histogram of grayscale colors, with bin size as 5 to avoid same color
     histogram, bins = get_histogram_gray(img, bins=range(0, 257, 5))
     # Sort histogram to find dominant colors
-    colors = np.flip(np.argsort(histogram))
+    colors = np.flip(np.argsort(histogram), axis=0)
     # Place colors in bins of size 5, to merge similar colors as one
     k_colors = bins[colors[0:k]]
     return k_colors
@@ -98,7 +110,17 @@ def domColors_gray(img, k):
 
 def domColors_color(img, k):
     """Find k most dominant colors in grayscale image."""
+    histogram, bins = get_histogram_color(img)
+    histogram, bins = np.array(histogram), np.array(bins)
+    dom_colors = np.flip(np.argsort(histogram), axis=0)
+    colors = [bins[dom_colors[0]]]
 
+    for i in dom_colors[1::]:
+        if check_distance(colors, bins[i]):
+            colors.append(bins[i])
+        if len(colors) == k:
+            break
+    return colors
 
 
 def domColors(img, k):
@@ -112,8 +134,8 @@ def domColors(img, k):
 
 
 if __name__ == "__main__":
-    img = imread("test.jpg", as_gray=True)
+    img = imread("A1_resources/puppy.jpg", as_gray=True)
     grayimg = img_as_ubyte(img)
     colors = domColors(grayimg, 10)
-    show_colors(grayimg, colors, True).show()
+    showColors(grayimg, colors, False).show()
     pdb.set_trace()
