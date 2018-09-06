@@ -42,7 +42,7 @@ def showColors(img, colors, gray=False):
         ax.imshow(img)
     ax.set_xticks([])
     ax.set_yticks([])
-    ax.set_aspect("auto")
+    ax.set_aspect("equal")
     ax.set_title("Image")
 
     ax = fig.add_subplot(312)

@@ -12,7 +12,6 @@ def transformIntensity(img, K1, K2, a, b):
 
     new_img = img.copy()
     new_img[valid_pixels] = K1 * img[valid_pixels] + K2
-    pdb.set_trace()
     return new_img
 
 
@@ -30,7 +29,6 @@ if __name__ == "__main__":
     img = img_as_float(img)
     transformed = transformIntensity(img, 1, 0.25, 0, 0.75)
     transformed = transformIntensity(transformed, 0, 0, 0.75, 1)
-    pdb.set_trace()
     showImages(img, transformed)
 
     # Do histogram equilization
