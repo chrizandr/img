@@ -3,6 +3,7 @@ from skimage.io import imread
 import pdb
 import matplotlib.pyplot as plt
 from scipy.signal import convolve2d
+from skimage.transform import resize
 import time
 
 
@@ -73,7 +74,7 @@ if __name__ == "__main__":
     # print("Average Squared distance between the two images is: {}".format(dist))
 
     # ---------------------------------------------
-
+    #
     # f = imread("A3_resources/5.jpeg", as_gray=True)
     #
     # h = imread("A3_resources/64x64.png", as_gray=True)
@@ -111,22 +112,86 @@ if __name__ == "__main__":
     # plt.show()
 
     # ---------------------------------------------
+    #
+    # f = imread("A3_resources/1.tiff", as_gray=True)
+    # h_original = imread("A3_resources/2.tiff", as_gray=True)
+    #
+    # freq_time = []
+    # spat_time = []
+    # for n in [32, 64, 128, 256]:
+    #     h = resize(h_original, (n, n))
+    #     row_pad = (f.shape[0] - h.shape[0]) // 2
+    #     col_pad = (f.shape[1] - h.shape[1]) // 2
+    #     start = time.time()
+    #     h_pad = np.pad(h, ((row_pad, row_pad), (col_pad, col_pad)), 'constant', constant_values=(0))
+    #     F = np.fft.fft2(f)
+    #     H = np.fft.fft2(h_pad)
+    #     iDFT_FH = np.fft.ifft(F*H)
+    #     iDFT_FH = scale_img(magnitude(iDFT_FH))
+    #     end = time.time()
+    #     freq_time.append(float(str(end-start)))
+    #
+    #     start = time.time()
+    #     f_conv_h = convolve2d(f, h)
+    #     end = time.time()
+    #     spat_time.append(float(str(end-start)))
+    #
+    # plt.plot(freq_time, [32, 64, 128, 256], color='red', label="Time taken in Frequency Domain")
+    # plt.plot(spat_time, [32, 64, 128, 256], color='blue', label="Time taken in Spatial Domain")
+    #
+    # plt.legend()
+    # plt.xlabel("Image Size")
+    # plt.ylabel("Time")
+    # plt.show()
 
-    f = imread("A3_resources/5.jpeg", as_gray=True)
+    # ---------------------------------------------
 
-    h = imread("A3_resources/64x64.png", as_gray=True)
+    f = imread("A3_resources/cameraman.jpg", as_gray=True)
+    h = imread("A3_resources/rice.png", as_gray=True)
 
     start = time.time()
-    h_pad = np.pad(h, ((143, 143), (166, 167)), 'constant', constant_values=(0))
-    F = np.fft.fft2(f)
-    H = np.fft.fft2(h_pad)
-    iDFT_FH = np.fft.ifft(F*H)
-    iDFT_FH = scale_img(magnitude(iDFT_FH))
+    f_pad = np.pad(f, ((128, 127), (128, 127)), 'constant', constant_values=(0))
+    h_pad = np.pad(h, ((128, 127), (128, 127)), 'constant', constant_values=(0))
+
+    F = np.fft.fftshift(np.fft.fft2(f_pad))
+    H = np.fft.fftshift(np.fft.fft2(h_pad))
+    f_conv_h = np.fft.ifft(np.fft.ifftshift(F * H))
+    f_conv_h_1 = scale_img(magnitude(f_conv_h))
     end = time.time()
 
-    print("Time taken in Frequency domain = {} seconds".format(end-start))
+    print("Time requried to compute = {}s".format(end-start))
 
     start = time.time()
-    f_conv_h = convolve2d(f, h)
+    f_pad = np.pad(f, ((128, 128), (128, 128)), 'constant', constant_values=(0))
+    h_pad = np.pad(h, ((128, 128), (128, 128)), 'constant', constant_values=(0))
+
+    F = np.fft.fftshift(np.fft.fft2(f_pad))
+    H = np.fft.fftshift(np.fft.fft2(h_pad))
+    f_conv_h = np.fft.ifft(np.fft.ifftshift(F * H))
+    f_conv_h_2 = scale_img(magnitude(f_conv_h))
     end = time.time()
-    print("Time taken in Spatial domain = {} seconds".format(end-start))
+
+    print("Time requried to compute = {}s".format(end-start))
+
+    plt.figure(figsize=(10, 10))
+    plt.imshow(f_conv_h_1, "gray")
+    plt.title("Convolved image 511x511")
+    plt.show()
+
+    plt.figure(figsize=(10, 10))
+    plt.imshow(f_conv_h_2, "gray")
+    plt.title("Convolved image 512x512")
+    plt.show()
+
+    subarray = np.hstack((f_conv_h_2[0:511, 0:255], f_conv_h_2[0:511, 256::]))
+    plt.figure(figsize=(10, 10))
+    plt.subplot(121)
+    plt.imshow(f_conv_h_1, "gray")
+    plt.title("Convolved image 511x511")
+
+    plt.subplot(122)
+    plt.imshow(subarray, "gray")
+    plt.title("Convolved image 512x512 subarray of 511x511")
+    plt.show()
+
+    pdb.set_trace()
