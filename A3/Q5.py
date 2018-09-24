@@ -33,6 +33,7 @@ if __name__ == "__main__":
         img_new = sample_img(img, n, n)
         fft_shifted = np.fft.fftshift(np.fft.fft(img_new))
         mag = scale_img(magnitude(fft_shifted))
+
         plt.figure(figsize=(10, 10))
         plt.subplots(121)
         plt.imshow(mag)
