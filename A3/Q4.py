@@ -15,28 +15,6 @@ def magnitude(fft_img):
     return mag
 
 
-def filterImg(img, kernel, padding=True):
-    img = img.astype(np.float) / 255.0
-    m, n = img.shape
-    pad_width = int(kernel.shape[0]/2) if padding else 0
-    img = np.pad(img, pad_width, 'edge')
-    new_img = np.zeros((m, n))
-
-    for i in range(0 + pad_width, m + pad_width):
-        for j in range(0 + pad_width, n + pad_width):
-            region = img[i-pad_width:i+pad_width, j-pad_width:j+pad_width]
-            value = region * kernel
-            new_img[i - pad_width, j - pad_width] = value.sum()
-
-    clip_top = (new_img > 1).nonzero()
-    new_img[clip_top] = 1
-
-    pdb.set_trace()
-# scale = 255/(np.max(new_img) - np.min(new_img))
-# new_img = scale*(new_img - np.min(new_img))
-    return new_img
-
-
 def scale_img(img):
     new_img = 20 * np.log(img)
     return new_img
