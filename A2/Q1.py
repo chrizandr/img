@@ -17,8 +17,10 @@ def filterImg(img, kernel, padding=True):
             value = region * kernel
             new_img[i - pad_width, j - pad_width] = value.sum()
 
-    scale = 255/(np.max(new_img) - np.min(new_img))
-    new_img = scale*(new_img - np.min(new_img))
+    clip_top = (new_img > 1).nonzero()
+    new_img[clip_top] = 1
+# scale = 255/(np.max(new_img) - np.min(new_img))
+# new_img = scale*(new_img - np.min(new_img))
     return new_img
 
 

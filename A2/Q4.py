@@ -22,6 +22,16 @@ def filterImg(img, kernel, padding=True):
     return new_img
 
 
+def add_filtered(img, filter_output):
+    img = img.astype(np.float)
+    filter_output = img.astype(np.float) / 255.0
+    new_img = img + filter_output
+    scale = 255/(np.max(new_img) - np.min(new_img))
+    new_img = scale*(new_img - np.min(new_img))
+    new_img = new_img.astype(np.uint8)
+    return new_img
+
+
 def combine_image(img_x, img_y):
     result = np.sqrt(img_x**2 + img_y**2)
     scale = 255/(np.max(result) - np.min(result))

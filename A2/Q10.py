@@ -8,10 +8,8 @@ def bilateral_filter(region, sigma_d, sigma_r):
     size = region.shape[0]
     i = int(size/2)
     j = i
-
     f_ij = region[i, j]
     bi_filter = np.zeros((size, size))
-
     for k in range(size):
         for l in range(size):
             domain_term = ((i-k)**2 + (j-l)**2)/(2*sigma_d**2)
