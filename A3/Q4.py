@@ -3,6 +3,7 @@ from skimage.io import imread
 import pdb
 import matplotlib.pyplot as plt
 from scipy.signal import convolve2d
+import time
 
 
 def magnitude(fft_img):
@@ -71,29 +72,61 @@ if __name__ == "__main__":
     # dist = np.mean((mag_F_dot_H - central_portion) ** 2)
     # print("Average Squared distance between the two images is: {}".format(dist))
 
+    # ---------------------------------------------
+
+    # f = imread("A3_resources/5.jpeg", as_gray=True)
+    #
+    # h = imread("A3_resources/64x64.png", as_gray=True)
+    # h_pad = np.pad(h, ((143, 143), (166, 167)), 'constant', constant_values=(0))
+    #
+    # plt.figure(figsize=(10, 10))
+    # plt.subplot(121)
+    # plt.imshow(f, 'gray')
+    # plt.title('f of size 350x397')
+    #
+    # plt.subplot(122)
+    # plt.imshow(h, 'gray')
+    # plt.title('h of size 64x64 with zero padding')
+    # plt.show()
+    #
+    # F = np.fft.fft2(f)
+    # H = np.fft.fft2(h_pad)
+    # FH = np.fft.fftshift(F*H)
+    # FH = scale_img(magnitude(FH))
+    #
+    # f_conv_h = convolve2d(f, h)
+    #
+    # DFT_fh = np.fft.fft2(f_conv_h)
+    # DFT_fh = np.fft.fftshift(DFT_fh)
+    # DFT_fh = scale_img(magnitude(DFT_fh))
+    #
+    # plt.figure(figsize=(10, 10))
+    # plt.subplot(121)
+    # plt.imshow(FH, 'gray')
+    # plt.title('Multiplication of Fourier transformed images')
+    #
+    # plt.subplot(122)
+    # plt.imshow(DFT_fh, 'gray')
+    # plt.title('DFT of convolved images.')
+    # plt.show()
+
+    # ---------------------------------------------
+
     f = imread("A3_resources/5.jpeg", as_gray=True)
 
     h = imread("A3_resources/64x64.png", as_gray=True)
+
+    start = time.time()
     h_pad = np.pad(h, ((143, 143), (166, 167)), 'constant', constant_values=(0))
-
-    plt.figure(figsize=(10, 10))
-    plt.subplot(121)
-    plt.imshow(f, 'gray')
-    plt.title('f of size 350x397')
-
-    plt.subplot(122)
-    plt.imshow(h, 'gray')
-    plt.title('h of size 64x64 with zero padding')
-    plt.show()
-
     F = np.fft.fft2(f)
     H = np.fft.fft2(h_pad)
-    FH = np.fft.fftshift(F*H)
-    FH = scale_img(magnitude(FH))
+    iDFT_FH = np.fft.ifft(F*H)
+    iDFT_FH = scale_img(magnitude(iDFT_FH))
+    end = time.time()
 
+    print("Time taken in Frequency domain = {} seconds".format(end-start))
+
+    start = time.time()
     f_conv_h = convolve2d(f, h)
-    f_conv_h = f_conv_h[32:-31, 32:-31]
-
-    
-
-    pdb.set_trace()
+    end = time.time()
+    print("Time taken in Spatial domain = {} seconds".format(end-start))
