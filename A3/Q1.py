@@ -23,7 +23,10 @@ if __name__ == "__main__":
     fft_shifted = np.fft.fftshift(fft)
     mag = magnitude(fft_shifted)
     scale_mag = scale_img(mag)
-    plt.subplot(121)
+    plt.subplot(221)
+    plt.imshow(img, 'gray')
+    plt.title("Original Image")
+    plt.subplot(223)
     plt.imshow(scale_mag, 'gray')
     plt.title("Original FFT magnitude")
 
@@ -35,11 +38,28 @@ if __name__ == "__main__":
     new_fft_shifted = np.fft.fftshift(new_fft)
     new_mag = magnitude(new_fft_shifted)
     new_scale_mag = scale_img(new_mag)
-    plt.subplot(122)
+    plt.subplot(222)
+    plt.imshow(new_img, 'gray')
+    plt.title("Scaled Image")
+    plt.subplot(224)
     plt.imshow(new_scale_mag, 'gray')
     plt.title("Scaled Image FFT magnitude")
     plt.show()
-    pdb.set_trace()
 
     # FFT of FFT
-    
+    fft_fft = np.fft.fft2(fft)
+    mag = magnitude(fft_fft)
+
+    plt.imshow(mag, 'gray')
+    plt.title("FFT of the FFT")
+    plt.show()
+
+    fft_flip = np.fft.ifftshift(np.flipud(fft_shifted))
+    fft_fft_flip = np.fft.fft2(fft_flip)
+    mag = magnitude(fft_fft_flip)
+
+    plt.imshow(mag, 'gray')
+    plt.title("FFT of the FFT after flipping")
+    plt.show()
+
+    pdb.set_trace()
