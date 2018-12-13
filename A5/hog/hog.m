@@ -2,11 +2,11 @@ I = imread(char(strcat(name, ".jpg")));
 
 hog_ = vl_hog(single(I), 8, 'verbose') ;
 imhog = vl_hog('render', hog_, 'verbose') ;
-imwrite(imhog, char(strcat(name, "_hog_u.jpg"))) ;
+imwrite(imhog, char(strcat(name, "_hog_uoctti.jpg"))) ;
 
 hog_ = vl_hog(single(I), 8, 'verbose', 'variant', 'dalaltriggs') ;
 imhog = vl_hog('render', hog_, 'verbose', 'variant', 'dalaltriggs') ;
-imwrite(imhog, char(strcat(name + "_hog_d.jpg"))) ;
+imwrite(imhog, char(strcat(name + "_hog_dalaltriggs.jpg"))) ;
 
 I2 = fliplr(I);
 hog_ = vl_hog(single(I2), 8, 'verbose') ;

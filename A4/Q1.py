@@ -2,7 +2,7 @@ import numpy as np
 import pdb
 from skimage.io import imread, imsave
 from skimage.filters import threshold_otsu
-import matplotlib.pyplot as plt
+# import matplotlib.pyplot as plt
 
 
 def morph_op(img, selems):
